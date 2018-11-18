@@ -143,6 +143,8 @@ class PreparedQuery extends Client
         $this->sendNotification(
             'query:post',
             [
+                'sql'          => $this->sql,
+                'parameters'   => $values,
                 'result_count' => $resource->countRows(),
                 'time_ms'      => sprintf("%03.1f", ($end - $start) * 1000),
             ]

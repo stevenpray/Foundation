@@ -11,6 +11,7 @@ namespace PommProject\Foundation\Listener;
 
 use PommProject\Foundation\Client\ClientPoolerInterface;
 use PommProject\Foundation\Client\ClientPooler;
+use PommProject\Foundation\Event\QueryEvent;
 
 /**
  * ListenerPooler
@@ -69,6 +70,12 @@ class ListenerPooler extends ClientPooler
                     'receivers' => $identifiers,
                 ]
             );
+
+        if ($identifiers === 'query:post') {
+            $emitter = $this->getSession()->getEmitter();
+            $event = new QueryEvent($data['sql'], $data['parameters'], $data['result_count'], $data['time_ms']);
+            $emitter->emit($event);
+        }
 
         if (is_scalar($identifiers)) {
             if ($identifiers === '*') {

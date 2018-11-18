@@ -9,6 +9,9 @@
  */
 namespace PommProject\Foundation\Session;
 
+use League\Event\Emitter;
+use League\Event\EmitterInterface;
+use PommProject\Foundation\Event\QueryEvent;
 use PommProject\Foundation\Inflector;
 use PommProject\Foundation\Client\Client;
 use PommProject\Foundation\Client\ClientHolder;
@@ -38,6 +41,7 @@ class Session implements LoggerAwareInterface
     protected $client_poolers = [];
     protected $stamp;
     protected $is_shutdown = false;
+    protected $emitter;
 
     use LoggerAwareTrait;
 
@@ -63,6 +67,7 @@ class Session implements LoggerAwareInterface
             : $client_holder
             ;
         $this->stamp = $stamp;
+        $this->emitter = new Emitter();
     }
 
     /**
@@ -342,5 +347,25 @@ ERROR;
     public function getRegisterPoolersNames()
     {
         return array_keys($this->client_poolers);
+    }
+
+
+    /**
+     * @return EmitterInterface
+     */
+    public function getEmitter()
+    {
+        return $this->emitter;
+    }
+
+    /**
+     * @param callable $listener
+     * @return Session
+     */
+    public function setQueryListener($listener)
+    {
+        $this->emitter->addListener(QueryEvent::class, $listener);
+
+        return $this;
     }
 }

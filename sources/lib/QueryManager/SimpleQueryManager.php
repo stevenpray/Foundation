@@ -59,6 +59,8 @@ class SimpleQueryManager extends QueryManagerClient
         $this->sendNotification(
             'query:post',
             [
+                'sql'          => $sql,
+                'parameters'   => $parameters,
                 'result_count' => $iterator->count(),
                 'time_ms'      => sprintf("%03.1f", ($end - $start) * 1000),
             ]
